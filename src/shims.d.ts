@@ -1,3 +1,5 @@
+import type { FilmService } from '@/services/film'
+
 declare interface Window {}
 
 declare module '*.vue' {
@@ -14,5 +16,11 @@ interface ImportMeta {
   env: {
     GITHUB_GIST_DATABASE_ID: string
     GITHUB_GIST_DATABASE_NAME: string
+  }
+}
+
+declare module 'pinia' {
+  export interface PiniaCustomProperties {
+    filmService: FilmService
   }
 }

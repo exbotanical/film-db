@@ -3,7 +3,7 @@ import { DataRepository, type Film } from '@/types'
 export class FilmService {
   constructor(private readonly repository: DataRepository<Film>) {}
 
-  getAllFilms() {
+  async getAllFilms() {
     return this.repository.getData()
   }
 }

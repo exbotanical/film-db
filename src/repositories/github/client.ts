@@ -1,6 +1,7 @@
 import { httpClient } from '@/services/http'
 import type { HttpClient } from '@/services/http/client'
 import type { DataRepository } from '@/types'
+
 import { GITHUB_API_URL } from './config'
 
 export interface GitHubRepositoryProps {
@@ -23,6 +24,7 @@ interface GistPayload {
 
 export class GitHubRepository<T> implements DataRepository<T> {
   private readonly client: HttpClient
+
   constructor(private readonly props: GitHubRepositoryProps) {
     this.client = httpClient(GITHUB_API_URL)
   }
@@ -35,11 +37,11 @@ export class GitHubRepository<T> implements DataRepository<T> {
           throw Error('failed to fetch data from db')
         }
 
-        return JSON.parse(this.getDbFile(data, this.props.databaseName)) as T
+        return JSON.parse(this.getDbFile(data, this.props.databaseName)) as T[]
       })
   }
 
   private getDbFile({ files }: GistPayload, name: string) {
-    return files[name]?.content
+    return files[name].content
   }
 }

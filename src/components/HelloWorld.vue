@@ -5,7 +5,7 @@ const count = ref(0)
 </script>
 
 <template>
-  <table v-if="persistedRows.length" style="background: white" id="movies">
+  <table v-if="persistedRows.length" id="movies" style="background: white">
     <tr>
       <th v-for="key in Object.keys(persistedRows[0])" :key="key">
         {{ key }}
