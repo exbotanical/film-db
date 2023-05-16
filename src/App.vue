@@ -1,24 +1,23 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import { ModalsContainer } from 'vue-final-modal'
 
-onBeforeMount(() => {})
+import FilmTable from './components/FilmTable.vue'
+import { useErrorHandler } from '@/hooks'
+
+onErrorCaptured(err => {
+  useErrorHandler(err, { notify: true })
+
+  return false
+})
 </script>
 
 <template>
-  <HelloWorld msg="Vite + Vue" />
-</template>
+  <Suspense>
+    <template #fallback> Loading... </template>
+    <template #default>
+      <FilmTable />
+    </template>
+  </Suspense>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+  <ModalsContainer />
+</template>

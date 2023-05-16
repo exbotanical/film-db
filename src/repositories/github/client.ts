@@ -3,6 +3,7 @@ import type { HttpClient } from '@/services/http/client'
 import type { DataRepository } from '@/types'
 
 import { GITHUB_API_URL } from './config'
+import { HttpError } from '@/hooks'
 
 export interface GitHubRepositoryProps {
   databaseId: string
@@ -34,7 +35,7 @@ export class GitHubRepository<T> implements DataRepository<T> {
       .get<GistPayload>(`/gists/${this.props.databaseId}`)
       .then(({ data, ok }) => {
         if (!ok) {
-          throw Error('failed to fetch data from db')
+          throw new HttpError('failed to fetch data from db')
         }
 
         return JSON.parse(this.getDbFile(data, this.props.databaseName)) as T[]
