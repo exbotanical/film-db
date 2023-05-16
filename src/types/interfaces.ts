@@ -1,3 +1,4 @@
 export interface DataRepository<T> {
-  getData(): Promise<T[]>
+  get(): Promise<T[]>
+  update(payload: T[]): Promise<boolean>
 }

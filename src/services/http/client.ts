@@ -32,11 +32,26 @@ export class HttpClient {
   async post<T = null | undefined, D = null | undefined>(
     url: string,
     payload?: D,
+    opts: Omit<RequestInit, 'body'> = {},
   ): Normalized<T> {
     const response = await this.request(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       ...(payload ? { body: JSON.stringify(payload) } : {}),
+      ...opts,
+    })
+
+    return this.normalize(response)
+  }
+
+  async patch<T = null | undefined, D = null | undefined>(
+    url: string,
+    payload?: D,
+    opts: Omit<RequestInit, 'body'> = {},
+  ): Normalized<T> {
+    const response = await this.request(url, {
+      method: 'PATCH',
+      ...(payload ? { body: JSON.stringify(payload) } : {}),
+      ...opts,
     })
 
     return this.normalize(response)

@@ -4,7 +4,11 @@ export class FilmService {
   constructor(private readonly repository: DataRepository<Film>) {}
 
   async getAllFilms() {
-    return this.repository.getData()
+    return this.repository.get()
+  }
+
+  async updateFilms(films: Film[]) {
+    return this.repository.update(films)
   }
 }
 

@@ -7,28 +7,34 @@ const filmStore = useFilmStore()
 const films = computed(() => filmStore.getFilms)
 
 await filmStore.fetchFilms()
+
+const headers = ['Title', 'Created At', 'Updated At', 'Comments', 'Watch Dates']
 </script>
 
 <template>
   <div style="overflow-x: auto">
     <table v-if="films.length" id="films" style="background: white">
       <tr>
-        <th v-for="key in Object.keys(films[0])" :key="key">
-          {{ key }}
+        <th v-for="(header, idx) in headers" :idx="idx">
+          {{ header }}
         </th>
       </tr>
       <tr v-for="(row, idx) in films" :key="idx">
-        <template v-for="[k, v] in Object.entries(row)">
-          <td v-if="k === 'watchDates'">
-            {{ (v as number[]).map(toReadableDate).join(', ') }}
-          </td>
-          <td v-else-if="k === 'createdAt' || k === 'updatedAt'">
-            {{ toReadableDate(v as number) }}
-          </td>
-          <td v-else>
-            {{ v }}
-          </td>
-        </template>
+        <td>
+          {{ row.title }}
+        </td>
+        <td>
+          {{ toReadableDate(row.createdAt) }}
+        </td>
+        <td>
+          {{ toReadableDate(row.updatedAt) }}
+        </td>
+        <td>
+          {{ row.comments }}
+        </td>
+        <td>
+          {{ row.watchDates.map(toReadableDate).join(', ') }}
+        </td>
       </tr>
     </table>
   </div>

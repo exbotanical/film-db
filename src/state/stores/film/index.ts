@@ -47,11 +47,13 @@ export const useFilmStore = defineStore('film', {
 
     async addFilm(newFilm: CreateFilmDto) {
       this.films.push(buildFilm(newFilm))
+      return await this.filmService.updateFilms(this.films)
     },
 
     async addFilms(newFilms: CreateFilmDto[]) {
       const films = newFilms.map(buildFilm)
       this.films.push(...films)
+      return await this.filmService.updateFilms(this.films)
     },
   },
 })

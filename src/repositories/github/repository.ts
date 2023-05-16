@@ -30,7 +30,7 @@ export class GitHubRepository<T> implements DataRepository<T> {
     this.client = httpClient(GITHUB_API_URL)
   }
 
-  async getData() {
+  async get() {
     return this.client
       .get<GistPayload>(`/gists/${this.props.databaseId}`)
       .then(({ data, ok }) => {
@@ -40,6 +40,27 @@ export class GitHubRepository<T> implements DataRepository<T> {
 
         return JSON.parse(this.getDbFile(data, this.props.databaseName)) as T[]
       })
+  }
+  // TODO: use oktokit
+  // TODO: paginate writes to mult files
+  async update(payload: T[]) {
+    return (
+      await this.client.patch(
+        `/gists/${this.props.databaseId}`,
+        {
+          gist_id: this.props.databaseId,
+          files: {
+            [this.props.databaseName]: { content: JSON.stringify(payload) },
+          },
+        },
+        {
+          headers: {
+            'X-GitHub-Api-Version': '2022-11-28',
+            'accept': 'application/vnd.github+json',
+          },
+        },
+      )
+    )?.ok
   }
 
   private getDbFile({ files }: GistPayload, name: string) {
