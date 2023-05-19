@@ -52,6 +52,7 @@ export class HttpClient {
       method: 'PATCH',
       ...(payload ? { body: JSON.stringify(payload) } : {}),
       ...opts,
+      mode: 'cors',
     })
 
     return this.normalize(response)

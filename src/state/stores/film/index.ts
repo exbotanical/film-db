@@ -2,12 +2,13 @@ import { defineStore } from 'pinia'
 import { v4 as uuid } from 'uuid'
 
 import type { FilmStoreState } from './types'
-import type { CreateFilmDto, Film, UnixTimeStamp } from '@/types'
+import type { CreateFilmDto, Film } from '@/types'
 import { useLocalStorage } from '@vueuse/core'
 import { diffFromNowInSecs } from '@/utils'
 
 const REFRESH_INTERVAL_IN_SECS = 3600
 
+// TODO: batch updates on beforeunload or SW
 export const useFilmStore = defineStore('film', {
   state: (): FilmStoreState => ({
     films: useLocalStorage<Film[]>('films', []),
@@ -18,21 +19,6 @@ export const useFilmStore = defineStore('film', {
     getFilms(state): Film[] {
       return state.films
     },
-
-    getFilmByTitle(state) {
-      return (matchTitle: string): Film | undefined =>
-        state.films.find(({ title }) => matchTitle === title)
-    },
-
-    getFilmsWatchedInDateRange(state) {
-      return (startDate: UnixTimeStamp, endDate: UnixTimeStamp): Film[] =>
-        state.films.filter(
-          ({ watchDates }) =>
-            !!watchDates.some(
-              watchDate => watchDate >= startDate && watchDate <= endDate,
-            ),
-        )
-    },
   },
 
   actions: {
@@ -41,19 +27,17 @@ export const useFilmStore = defineStore('film', {
         !this.films.length ||
         diffFromNowInSecs(this.lastRefreshed) > REFRESH_INTERVAL_IN_SECS
       ) {
-        this.films = await this.filmService.getAllFilms()
+        this.films = await this.repository.get()
+        this.lastRefreshed = Date.now()
       }
     },
 
-    async addFilm(newFilm: CreateFilmDto) {
-      this.films.push(buildFilm(newFilm))
-      return await this.filmService.updateFilms(this.films)
-    },
+    async addFilm(addFilm: CreateFilmDto) {
+      const newFilm = buildFilm(addFilm)
+      await this.repository.update([...this.films, newFilm])
 
-    async addFilms(newFilms: CreateFilmDto[]) {
-      const films = newFilms.map(buildFilm)
-      this.films.push(...films)
-      return await this.filmService.updateFilms(this.films)
+      this.films.push(newFilm)
+      this.lastRefreshed = Date.now()
     },
   },
 })

@@ -13,7 +13,7 @@ const headers = ['Title', 'Created At', 'Updated At', 'Comments', 'Watch Dates']
 
 <template>
   <div style="overflow-x: auto">
-    <table v-if="films.length" id="films" style="background: white">
+    <table id="films" style="background: white">
       <tr>
         <th v-for="(header, idx) in headers" :idx="idx">
           {{ header }}
@@ -50,27 +50,28 @@ const headers = ['Title', 'Created At', 'Updated At', 'Comments', 'Watch Dates']
 
 #films td,
 #films th {
-  border: 1px solid var(--border);
+  border: 1px solid rgb(60, 59, 59);
   padding: 8px;
 }
 
-#films tr:nth-child(even) {
-  background-color: var(--cell-bg);
+#films tr {
+  background-color: #a8a8a8;
 }
 
 #films tr:hover {
-  background-color: var(--border);
+  background-color: #797878;
+  cursor: pointer;
 }
 
 #films th {
   padding-top: 12px;
   padding-bottom: 12px;
   text-align: left;
-  background-color: var(--header-bg);
-  color: var(--header-fg);
+  background-color: #797878;
+  color: #000;
 }
 
 #films td {
-  color: var(--cell-fg);
+  color: #000;
 }
 </style>

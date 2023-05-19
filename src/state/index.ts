@@ -1,9 +1,9 @@
-import { FilmService } from '@/services/film'
+import type { DataRepository, Film } from '@/types'
 
 export * from './stores/film'
 
 declare module 'pinia' {
   export interface PiniaCustomProperties {
-    filmService: FilmService
+    repository: DataRepository<Film>
   }
 }

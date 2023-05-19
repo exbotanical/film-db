@@ -17,7 +17,8 @@ export const useErrorHandler = (
     fallback || 'Uh oh, something went wrong. Please try refreshing the page.'
 
   if (ex instanceof ClientError) {
-    const { friendly } = ex.serialize()
+    const { friendly, internal } = ex.serialize()
+    console.warn(internal)
 
     ret = friendly
   }

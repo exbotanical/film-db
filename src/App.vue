@@ -14,9 +14,6 @@ const { open, close } = useModal({
       close()
     },
   },
-  slots: {
-    default: '<p>The content of the modal</p>',
-  },
 })
 
 onErrorCaptured(err => {
@@ -34,6 +31,6 @@ onErrorCaptured(err => {
     </template>
   </Suspense>
 
-  <button @click="open">Add Film</button>
+  <button style="margin-top: 1em" @click="open">Add Film</button>
   <ModalsContainer />
 </template>

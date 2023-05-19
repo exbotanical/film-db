@@ -1,8 +1,6 @@
-import { httpClient } from '@/services/http'
 import type { HttpClient } from '@/services/http/client'
 import type { DataRepository } from '@/types'
 
-import { GITHUB_API_URL } from './config'
 import { HttpError } from '@/hooks'
 
 export interface GitHubRepositoryProps {
@@ -10,7 +8,7 @@ export interface GitHubRepositoryProps {
   databaseName: string
 }
 
-interface GistPayload {
+interface GistResponsePayload {
   files: {
     [key: string]: {
       content: string
@@ -23,16 +21,26 @@ interface GistPayload {
   // TODO: rest
 }
 
-export class GitHubRepository<T> implements DataRepository<T> {
-  private readonly client: HttpClient
-
-  constructor(private readonly props: GitHubRepositoryProps) {
-    this.client = httpClient(GITHUB_API_URL)
+interface GistRequestPayload {
+  gist_id: string
+  files: {
+    [k: string]: {
+      content: string
+    }
   }
+}
+
+const TOKEN = localStorage.getItem('TODO_TOK')
+
+export class GitHubRepository<T> implements DataRepository<T> {
+  constructor(
+    private readonly client: HttpClient,
+    private readonly props: GitHubRepositoryProps,
+  ) {}
 
   async get() {
     return this.client
-      .get<GistPayload>(`/gists/${this.props.databaseId}`)
+      .get<GistResponsePayload>(`/gists/${this.props.databaseId}`)
       .then(({ data, ok }) => {
         if (!ok) {
           throw new HttpError('failed to fetch data from db')
@@ -41,11 +49,10 @@ export class GitHubRepository<T> implements DataRepository<T> {
         return JSON.parse(this.getDbFile(data, this.props.databaseName)) as T[]
       })
   }
-  // TODO: use oktokit
   // TODO: paginate writes to mult files
   async update(payload: T[]) {
-    return (
-      await this.client.patch(
+    return this.client
+      .patch<GistResponsePayload, GistRequestPayload>(
         `/gists/${this.props.databaseId}`,
         {
           gist_id: this.props.databaseId,
@@ -57,13 +64,21 @@ export class GitHubRepository<T> implements DataRepository<T> {
           headers: {
             'X-GitHub-Api-Version': '2022-11-28',
             'accept': 'application/vnd.github+json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${TOKEN}`,
           },
         },
       )
-    )?.ok
+      .then(({ data, ok }) => {
+        if (!ok) {
+          throw new HttpError('failed to fetch data from db')
+        }
+
+        return JSON.parse(this.getDbFile(data, this.props.databaseName)) as T[]
+      })
   }
 
-  private getDbFile({ files }: GistPayload, name: string) {
+  private getDbFile({ files }: GistResponsePayload, name: string) {
     return files[name].content
   }
 }

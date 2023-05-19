@@ -12,6 +12,7 @@ declare module '*.vue' {
 
 interface ImportMeta {
   env: {
+    VITE_GITHUB_API_URL: string
     VITE_GITHUB_GIST_DATABASE_ID: string
     VITE_GITHUB_GIST_DATABASE_NAME: string
   }

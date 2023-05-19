@@ -5,6 +5,7 @@ export const defaultNormalizer = async <T>(
 ): Normalized<T> => {
   try {
     if (!response.ok) {
+      console.error('failed HTTP request', { response })
       return {
         ok: false,
         data: null,
@@ -18,10 +19,13 @@ export const defaultNormalizer = async <T>(
       data,
     }
   } catch (ex) {
+    console.error('failed HTTP request', {
+      ex: ex instanceof Error ? ex.message : JSON.stringify(ex),
+    })
+
     return {
       ok: false,
       data: null,
-      message: ex instanceof Error ? ex.message : JSON.stringify(ex),
     }
   }
 }

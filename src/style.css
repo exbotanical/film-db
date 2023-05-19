@@ -5,27 +5,13 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #3f8b8e;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-}
-
-:root {
-  --white: #ffffff;
-
-  --bg: #25283a;
-  --border: #34384e;
-  --cell-fg: var(--white);
-  --cell-bg: #1e2130;
-  --header-fg: #979bb0;
-  --header-bg: #16141c;
-  --interactive-fg: var(--white);
-  --interactive-bg: #e53265;
-  --interactive-bg2: #ed7093;
 }
 
 a {
@@ -43,19 +29,22 @@ h1 {
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
+  border-radius: 6px;
+  border: none;
+  padding: 0.6em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #ef762fd4;
   cursor: pointer;
   transition: border-color 0.25s;
 }
-button:hover {
-  border-color: #646cff;
+
+button:hover:enabled {
+  background-color: #ff8139 !important;
+  cursor: pointer;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
