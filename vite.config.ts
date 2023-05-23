@@ -19,4 +19,7 @@ export default defineConfig({
       '@': r('./src'),
     },
   },
+  server: {
+    port: 5000,
+  },
 })

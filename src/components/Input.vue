@@ -17,5 +17,5 @@ const mutableModelValue = computed({
 
 <template>
   <label :for="id">{{ label }}</label>
-  <input v-model="mutableModelValue" v-bind="$attrs" :id="id" />
+  <input v-bind="$attrs" :id="id" v-model="mutableModelValue" />
 </template>

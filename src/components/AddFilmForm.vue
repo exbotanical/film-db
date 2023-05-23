@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { VueFinalModal } from 'vue-final-modal'
+
 import Input from '@/components/Input.vue'
 import { useFilmStore } from '@/state'
 
@@ -50,22 +51,22 @@ async function handleSubmit() {
     <h1>{{ title }}</h1>
 
     <form style="display: flex; flex-direction: column">
-      <Input id="title" label="Title" type="text" v-model="formModel.title" />
+      <Input id="title" v-model="formModel.title" label="Title" type="text" />
       <Input
         id="watchDates"
+        v-model="formModel.watchDates"
         label="Watch Dates"
         type="text"
-        v-model="formModel.watchDates"
       />
       <Input
         id="comments"
+        v-model="formModel.comments"
         label="Comments"
         type="text"
-        v-model="formModel.comments"
       />
     </form>
 
-    <button @click="handleSubmit" :disabled="!isFormValid">Submit</button>
+    <button :disabled="!isFormValid" @click="handleSubmit">Submit</button>
   </VueFinalModal>
 </template>
 

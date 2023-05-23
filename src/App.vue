@@ -1,20 +1,8 @@
 <script setup lang="ts">
-import { ModalsContainer, useModal } from 'vue-final-modal'
-
-import FilmTable from './components/FilmTable.vue'
-import AddFilmForm from './components/AddFilmForm.vue'
-
 import { useErrorHandler } from '@/hooks'
+import FilmTable from '@/components/Films/FilmTable.vue'
 
-const { open, close } = useModal({
-  component: AddFilmForm,
-  attrs: {
-    title: 'Add film',
-    onConfirm() {
-      close()
-    },
-  },
-})
+import './style.css'
 
 onErrorCaptured(err => {
   useErrorHandler(err, { notify: true })
@@ -24,13 +12,12 @@ onErrorCaptured(err => {
 </script>
 
 <template>
-  <Suspense>
-    <template #fallback> Loading... </template>
-    <template #default>
-      <FilmTable />
-    </template>
-  </Suspense>
-
-  <button style="margin-top: 1em" @click="open">Add Film</button>
-  <ModalsContainer />
+  <QLayout view="hHh Lpr fFf">
+    <Suspense>
+      <template #fallback> Loading... </template>
+      <template #default>
+        <FilmTable />
+      </template>
+    </Suspense>
+  </QLayout>
 </template>

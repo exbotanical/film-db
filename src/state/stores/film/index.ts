@@ -1,10 +1,11 @@
+import { useLocalStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { v4 as uuid } from 'uuid'
 
-import type { FilmStoreState } from './types'
-import type { CreateFilmDto, Film } from '@/types'
-import { useLocalStorage } from '@vueuse/core'
+import type { UpsertFilmDto, Film, UUID } from '@/types'
 import { diffFromNowInSecs } from '@/utils'
+
+import type { FilmStoreState } from './types'
 
 const REFRESH_INTERVAL_IN_SECS = 3600
 
@@ -32,17 +33,41 @@ export const useFilmStore = defineStore('film', {
       }
     },
 
-    async addFilm(addFilm: CreateFilmDto) {
+    async addFilm(addFilm: UpsertFilmDto) {
       const newFilm = buildFilm(addFilm)
-      await this.repository.update([...this.films, newFilm])
+      const newFilms = this.films.concat(newFilm)
 
-      this.films.push(newFilm)
+      await this.repository.update(newFilms)
+
+      this.films = newFilms
+      this.lastRefreshed = Date.now()
+    },
+
+    async updateFilm(id: UUID, updateFilm: UpsertFilmDto) {
+      const filmIdx = this.films.findIndex(film => film.id === id)
+      if (filmIdx === -1) {
+        // TODO: const err msg
+        throw new Error(
+          'failed to update film because props.id does not match any known film; this is a bug',
+        )
+      }
+
+      const film = this.films[filmIdx]
+
+      this.films.splice(filmIdx, 1, {
+        ...film,
+        ...updateFilm,
+        updatedAt: Date.now(),
+      })
+
+      await this.repository.update(this.films)
+
       this.lastRefreshed = Date.now()
     },
   },
 })
 
-function buildFilm(newFilm: CreateFilmDto) {
+function buildFilm(newFilm: UpsertFilmDto) {
   const now = Date.now()
   const film: Film = {
     ...newFilm,

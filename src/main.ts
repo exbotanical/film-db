@@ -1,18 +1,21 @@
 import { createPinia } from 'pinia'
 import { createApp } from 'vue'
-import { createVfm } from 'vue-final-modal'
+import { Dialog, Loading, Notify, Quasar } from 'quasar'
+import quasarIconSet from 'quasar/icon-set/svg-mdi-v6'
 
-import { debugPlugin } from '@/plugins'
+import { debugPlugin, registerNotifyPlugin, quasarStyles } from '@/plugins'
 
-import '@/style.css'
-import 'vue-final-modal/style.css'
-
-import App from './App.vue'
 import { GitHubRepository } from '@/repositories/github'
 import { HttpClient, defaultNormalizer } from '@/services/http'
 
+import App from './App.vue'
+
+import '@quasar/extras/mdi-v6/mdi-v6.css'
+import 'quasar/src/css/index.sass'
+
 createApp(App)
   .use(debugPlugin)
+  .use(registerNotifyPlugin)
   .use(
     createPinia().use(() => ({
       repository: new GitHubRepository(
@@ -24,5 +27,15 @@ createApp(App)
       ),
     })),
   )
-  .use(createVfm())
+  .use(Quasar, {
+    iconSet: quasarIconSet,
+    plugins: {
+      Dialog,
+      Loading,
+      Notify,
+    },
+    config: {
+      ...quasarStyles,
+    },
+  })
   .mount('#app')

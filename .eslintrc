@@ -1,3 +1,4 @@
 {
-  "extends": ["@magister_zito/vue", "prettier"]
+  "extends": ["@magister_zito/vue", "prettier"],
+  "ignorePatterns": ["auto-imports.d.ts"]
 }

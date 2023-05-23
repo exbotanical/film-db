@@ -17,7 +17,7 @@ export interface Normalizer {
 
 export class HttpClient {
   constructor(
-    private readonly baseUrl = '/',
+    private readonly baseUrl: string,
     private readonly normalize: Normalizer,
   ) {}
 

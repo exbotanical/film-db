@@ -1,7 +1,6 @@
+import { HttpError } from '@/hooks'
 import type { HttpClient } from '@/services/http/client'
 import type { DataRepository } from '@/types'
-
-import { HttpError } from '@/hooks'
 
 export interface GitHubRepositoryProps {
   databaseId: string
@@ -49,6 +48,7 @@ export class GitHubRepository<T> implements DataRepository<T> {
         return JSON.parse(this.getDbFile(data, this.props.databaseName)) as T[]
       })
   }
+
   // TODO: paginate writes to mult files
   async update(payload: T[]) {
     return this.client

@@ -1,12 +1,12 @@
-import type { UUID, UnixTimeStamp } from '.'
+import type { UUID, UnixTimeStamp, DateString } from '.'
 
 export interface Film {
   id: UUID
   title: string
   createdAt: UnixTimeStamp
   updatedAt: UnixTimeStamp
-  watchDates: UnixTimeStamp[]
+  watchDates: DateString[]
   comments?: string
 }
 
-export type CreateFilmDto = Omit<Film, 'id' | 'createdAt' | 'updatedAt'>
+export type UpsertFilmDto = Omit<Film, 'createdAt' | 'id' | 'updatedAt'>
