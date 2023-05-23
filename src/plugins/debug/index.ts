@@ -15,11 +15,11 @@ function debug(this: App) {
     e.preventDefault()
   }
 
-  this.config.errorHandler = (err, vm, info) => {
+  this.config.errorHandler = (err, _vm, info) => {
     console.error(`Exception: ${err}\nInfo: ${info}`)
   }
 
-  this.config.warnHandler = (msg, vm, trace) => {
+  this.config.warnHandler = (msg, _vm, trace) => {
     console.warn(`Warning: ${msg}\nTrace: ${trace}`)
   }
 }

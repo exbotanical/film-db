@@ -2,6 +2,6 @@ import type { QTableProps } from 'quasar'
 
 export type QuasarTableCol = NonNullable<QTableProps['columns']>[number]
 
-export type QuasarRef = {
+export interface QuasarRef {
   $el: HTMLElement | null
 }

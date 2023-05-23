@@ -1,13 +1,11 @@
-<script lang="ts">
-export default {
-  inheritAttrs: false,
-}
-</script>
-
 <script lang="ts" setup>
 import type { PropType } from 'vue'
 
 export type ButtonType = 'action' | 'cancel' | 'danger'
+
+defineOptions({
+  inheritAttrs: false,
+})
 
 const props = defineProps({
   label: {

@@ -1,28 +1,25 @@
 <script setup lang="ts">
-import Button from '@/components/common/Button.vue'
+import type { PropType } from 'vue'
 
-import { useFilmStore } from '@/state'
+import Button from '@/components/common/Button.vue'
+import Loader from '@/components/common/Loader.vue'
 import { showNotification } from '@/plugins'
-import { required, list, date, copy } from '@/utils'
+import { useFilmStore } from '@/state'
+import type { Film, UpsertFilmDto } from '@/types'
+import { required, list, date, copy, preventDefaultBehavior } from '@/utils'
 
 import { defaultFilmModel } from './util'
-
-import type { Film, UpsertFilmDto } from '@/types'
-import type { PropType } from 'vue'
-import Loader from '../common/Loader.vue'
 
 const filmStore = useFilmStore()
 
 const props = defineProps({
   film: { type: Object as PropType<Film> },
 })
-
 const $emit = defineEmits<{
   (e: 'close'): void
 }>()
 
 const isLoading = ref(false)
-
 const formModel = ref<UpsertFilmDto>(copy(props.film) || defaultFilmModel())
 
 const isFormModelValid = computed(
@@ -30,7 +27,7 @@ const isFormModelValid = computed(
 )
 
 async function handleSubmit(e: Event) {
-  e.preventDefault()
+  preventDefaultBehavior(e)
 
   isLoading.value = true
   try {
@@ -41,12 +38,35 @@ async function handleSubmit(e: Event) {
     }
 
     await filmStore.updateFilm(props.film.id, formModel.value)
-    showNotification('success', 'Film successfully updated')
 
+    showNotification('success', 'Film successfully updated')
     $emit('close')
   } catch (ex) {
     console.error(ex)
     showNotification('error', 'Failed to save the film update')
+  } finally {
+    isLoading.value = false
+  }
+}
+
+async function handleDelete(e: Event) {
+  preventDefaultBehavior(e)
+
+  isLoading.value = true
+  try {
+    if (!props.film?.id) {
+      showNotification('error', 'Something went wrong')
+      $emit('close')
+      return
+    }
+
+    await filmStore.deleteFilm(props.film.id)
+
+    showNotification('success', 'Film successfully deleted')
+    $emit('close')
+  } catch (ex) {
+    console.error(ex)
+    showNotification('error', 'Failed to delete the film')
   } finally {
     isLoading.value = false
   }
@@ -60,28 +80,28 @@ function handleReset() {
 <template>
   <q-card>
     <q-card-section>
-      <q-form autofocus @submit="handleSubmit" @reset="handleReset">
+      <q-form @submit="handleSubmit" @reset="handleReset">
         <!-- TODO: reusable component / DRY -->
         <q-input
           v-model="formModel.title"
+          :rules="[required('Title is required')]"
+          lazy-rules
           label="Title"
           filled
-          lazy-rules
-          :rules="[required('Title is required')]"
         />
 
         <q-select
-          label="Watch Dates"
-          filled
           v-model="formModel.watchDates"
+          :rules="[list(date('Each must be a valid date'))]"
+          label="Watch Dates"
+          input-debounce="0"
           use-input
           use-chips
+          new-value-mode="add-unique"
           multiple
           hide-dropdown-icon
-          input-debounce="0"
-          new-value-mode="add-unique"
+          filled
           style="width: 250px"
-          :rules="[list(date('Each must be a valid date'))]"
         />
 
         <q-input
@@ -96,11 +116,12 @@ function handleReset() {
     <q-separator />
     <q-card-actions>
       <Button
-        @click="handleSubmit"
+        :disable-config="isFormModelValid ? null : 'Missing required fields'"
         type="action"
         label="Save"
-        :disable-config="isFormModelValid ? null : 'Missing required fields'"
+        @click="handleSubmit"
       />
+      <Button type="danger" label="Delete" @click="handleDelete" />
     </q-card-actions>
 
     <Loader :is-loading="isLoading" />

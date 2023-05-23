@@ -1,5 +1,5 @@
 export interface ValidationRule {
-  (val: string | null): true | string
+  (val: string | null): string | true
 }
 
 export function required(message: string) {

@@ -3,23 +3,25 @@ import type { Plugin } from 'vue'
 import { Notify } from 'quasar'
 
 type V = Parameters<Notify['registerType']>[1]
-type NotificationTypes = 'error' | 'success' | 'warning'
+type NotificationTypes = 'error' | 'success' | 'warn'
+
+const DEFAULT_TIMEOUT = 4000
 
 const notificationTypes: Record<NotificationTypes, V> = {
   error: {
     icon: 'mdi-alert',
-    color: 'exceptional',
-    timeout: 4000,
+    color: 'negative',
+    timeout: DEFAULT_TIMEOUT,
   },
   success: {
     icon: 'mdi-checkbox-marked-circle',
-    color: 'community',
-    timeout: 4000,
+    color: 'positive',
+    timeout: DEFAULT_TIMEOUT,
   },
-  warning: {
+  warn: {
     icon: 'mdi-alert',
-    color: 'warning',
-    timeout: 4000,
+    color: 'warn',
+    timeout: DEFAULT_TIMEOUT,
   },
 }
 

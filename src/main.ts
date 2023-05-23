@@ -1,10 +1,9 @@
 import { createPinia } from 'pinia'
-import { createApp } from 'vue'
 import { Dialog, Loading, Notify, Quasar } from 'quasar'
 import quasarIconSet from 'quasar/icon-set/svg-mdi-v6'
+import { createApp } from 'vue'
 
 import { debugPlugin, registerNotifyPlugin, quasarStyles } from '@/plugins'
-
 import { GitHubRepository } from '@/repositories/github'
 import { HttpClient, defaultNormalizer } from '@/services/http'
 

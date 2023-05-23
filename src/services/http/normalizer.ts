@@ -1,4 +1,4 @@
-import { Normalized } from './client'
+import type { Normalized } from './client'
 
 export const defaultNormalizer = async <T>(
   response: Response,
@@ -12,7 +12,7 @@ export const defaultNormalizer = async <T>(
       }
     }
 
-    const data = await response.json()
+    const data = (await response.json()) as T
 
     return {
       ok: true,

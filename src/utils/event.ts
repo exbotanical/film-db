@@ -2,10 +2,8 @@ interface Options {
   stopPropagation?: boolean
 }
 
-type PressEvent = KeyboardEvent | MouseEvent
-
 export function preventDefaultBehavior(
-  e: PressEvent,
+  e: Event,
   { stopPropagation = true }: Options = {},
 ) {
   if (stopPropagation) {
@@ -16,7 +14,7 @@ export function preventDefaultBehavior(
   return false
 }
 
-export function disabledEventPropagation(e: PressEvent) {
+export function disabledEventPropagation(e: Event) {
   e.stopPropagation()
 
   if (window.event) {

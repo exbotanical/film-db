@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import UpdateFilm from '@/components/Films/UpdateFilm.vue'
 import AddFilms from '@/components/Films/AddFilms.vue'
-
-import { useFilmStore } from '@/state'
+import UpdateFilm from '@/components/Films/UpdateFilm.vue'
 import { useTable } from '@/hooks'
+import { useFilmStore } from '@/state'
 import type { Film } from '@/types'
 
 import { tableColumns } from './template'
@@ -12,40 +11,34 @@ import { tableColumns } from './template'
 const filmStore = useFilmStore()
 
 const isLoading = ref(true)
-const showUpdateFilm = ref(false)
-const showAddFilms = ref(false)
 const titleSearchText = ref('')
-
-const films = computed(() => filmStore.getFilms)
-
-await filmStore.fetchFilms().then(() => (isLoading.value = false))
-
-const searchFilms = computed(() => {
-  return films.value.filter(({ title }) => {
-    if (!titleSearchText.value) {
-      return true
-    }
-
-    return title.toLowerCase().includes(titleSearchText.value.toLowerCase())
-  })
-})
 
 const paginationConfig = computed(() => ({
   rowsPerPage: 0,
   rowsNumber: searchFilms.value.length,
 }))
 
-function onDblClick() {
-  showUpdateFilm.value = true
+const films = computed(() => filmStore.getFilms)
+
+const searchFilms = computed(() =>
+  films.value.filter(({ title }) => {
+    if (!titleSearchText.value) {
+      return true
+    }
+
+    return title.toLowerCase().includes(titleSearchText.value.toLowerCase())
+  }),
+)
+
+const showUpdateFilm = ref(false)
+function handleCloseUpdateModal() {
+  showUpdateFilm.value = false
 }
 
+const showAddFilms = ref(false)
 function handleAddFilms(e: Event) {
   e.preventDefault()
   showAddFilms.value = true
-}
-
-function handleCloseUpdateModal() {
-  showUpdateFilm.value = false
 }
 
 function handleCloseAddModal() {
@@ -55,6 +48,10 @@ function handleCloseAddModal() {
 const tableRef = ref(null)
 const tableId = 'films-table'
 
+function onDblClick() {
+  showUpdateFilm.value = true
+}
+
 const { selectedRowRef, handleKeypress, handleClick, handleDblClick } =
   useTable<Film>({
     tableRows: films,
@@ -63,33 +60,38 @@ const { selectedRowRef, handleKeypress, handleClick, handleDblClick } =
     initialRowIndex: 0,
     onDblClick,
   })
+
+onBeforeMount(
+  async () =>
+    await filmStore.fetchFilms().then(() => (isLoading.value = false)),
+)
 </script>
 
 <template>
   <q-table
     :id="tableId"
-    :data-testid="tableId"
     ref="tableRef"
+    :data-testid="tableId"
+    row-key="id"
     :tabindex="-1"
+    :loading="isLoading"
+    :selected="[selectedRowRef]"
     :columns="tableColumns"
     :rows="searchFilms"
-    row-key="id"
-    class="sticky-table"
     :rows-per-page-options="[0]"
     :pagination="paginationConfig"
     virtual-scroll
     :virtual-scroll-item-size="20"
     :virtual-scroll-sticky-size-start="20"
+    class="sticky-table bg-secondary"
     flat
     dense
     hide-pagination
+    hide-bottom
     square
-    :loading="isLoading"
-    :selected="[selectedRowRef]"
     @keydown="handleKeypress"
     @row-click="handleClick"
     @row-dblclick="handleDblClick"
-    hide-bottom
   >
     <template #top>
       <div class="full-width row items-center justify-between">
@@ -115,7 +117,12 @@ const { selectedRowRef, handleKeypress, handleClick, handleDblClick } =
 
     <template #header="props">
       <q-tr :props="props">
-        <q-th v-for="col in props.cols" :key="col.name" :props="props">
+        <q-th
+          v-for="col in props.cols"
+          :key="col.name"
+          :props="props"
+          class="bg-secondary"
+        >
           {{ col.label }}
         </q-th>
       </q-tr>
@@ -124,18 +131,18 @@ const { selectedRowRef, handleKeypress, handleClick, handleDblClick } =
 
   <q-dialog
     v-model="showUpdateFilm"
-    @hide="handleCloseUpdateModal"
     no-backdrop-dismiss
+    @hide="handleCloseUpdateModal"
   >
-    <UpdateFilm @close="handleCloseUpdateModal" :film="selectedRowRef" />
+    <UpdateFilm :film="selectedRowRef" @close="handleCloseUpdateModal" />
   </q-dialog>
 
   <q-dialog
     v-model="showAddFilms"
-    @hide="handleCloseAddModal"
     no-backdrop-dismiss
+    @hide="handleCloseAddModal"
   >
-    <AddFilms @close="handleCloseAddModal" :film="selectedRowRef" />
+    <AddFilms :film="selectedRowRef" @close="handleCloseAddModal" />
   </q-dialog>
 </template>
 

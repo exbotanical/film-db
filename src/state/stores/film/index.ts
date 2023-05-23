@@ -69,7 +69,21 @@ export const useFilmStore = defineStore('film', {
       })
 
       await this.repository.update(this.films)
+      this.lastRefreshed = Date.now()
+    },
 
+    async deleteFilm(id: UUID) {
+      const filmIdx = this.films.findIndex(film => film.id === id)
+      if (filmIdx === -1) {
+        // TODO: const err msg
+        throw new Error(
+          'failed to update film because props.id does not match any known film; this is a bug',
+        )
+      }
+
+      this.films.splice(filmIdx, 1)
+
+      await this.repository.update(this.films)
       this.lastRefreshed = Date.now()
     },
   },

@@ -1,12 +1,11 @@
 import type { ComputedRef, Ref } from 'vue'
 
+import type { QuasarRef } from '@/plugins/quasar/types'
 import { preventDefaultBehavior } from '@/utils'
-import { QuasarRef } from '@/plugins/quasar/types'
 
 const noop = () => {}
 
 /**
- * Use selectable table functionality. For Composition API components.
  * @param tableRef A ref container for the table ref value. Must have the same name as the `ref="X"` value in the table.
  * @param tableRows The table rows.
  * @param tableId The table id.
@@ -78,7 +77,7 @@ export function useTable<RowType extends Record<PropertyKey, any>>({
   }
 
   function handleClick(e: Event, row: RowType, idx: number) {
-    preventDefaultBehavior(e as MouseEvent)
+    preventDefaultBehavior(e)
 
     selectedRowRef.value = row
     selectedIdxRef.value = idx
@@ -87,7 +86,7 @@ export function useTable<RowType extends Record<PropertyKey, any>>({
   }
 
   function handleDblClick(e: Event, row: RowType, idx: number) {
-    preventDefaultBehavior(e as MouseEvent)
+    preventDefaultBehavior(e)
 
     selectedRowRef.value = row
     selectedIdxRef.value = idx
@@ -96,7 +95,7 @@ export function useTable<RowType extends Record<PropertyKey, any>>({
   }
 
   function handleKeypress(e: KeyboardEvent) {
-    return useTableKeybindings(e)
+    useTableKeybindings(e)
   }
 
   function focusNthRow(idx: number) {

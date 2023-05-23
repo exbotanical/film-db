@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "vue-tsc && vite build",
+    "check": "pnpm lint && pnpm typecheck && pnpm format",
     "clean": "rimraf node_modules package-lock.json dist",
     "dev": "vite",
     "preview": "vite preview",

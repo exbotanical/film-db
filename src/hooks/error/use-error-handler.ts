@@ -1,3 +1,5 @@
+import { showNotification } from '@/plugins'
+
 import { ClientError } from '.'
 
 interface ErrorHandlerOptions {
@@ -5,10 +7,8 @@ interface ErrorHandlerOptions {
   fallback?: string
 }
 
-const showNotification = alert // TODO:
-
 export const useErrorHandler = (
-  ex: any,
+  ex: unknown,
   { notify = false, fallback }: ErrorHandlerOptions,
 ) => {
   console.error({ ex })
@@ -24,7 +24,7 @@ export const useErrorHandler = (
   }
 
   if (notify) {
-    showNotification(ret)
+    showNotification('error', ret)
   }
 
   return ret

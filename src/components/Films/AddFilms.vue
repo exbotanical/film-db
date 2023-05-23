@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { UpsertFilmDto } from '@/types'
+import Button from '@/components/common/Button.vue'
+import Loader from '@/components/common/Loader.vue'
+import { showNotification } from '@/plugins'
+import { useFilmStore } from '@/state'
+import type { UpsertFilmDto } from '@/types'
+import { date, list, preventDefaultBehavior, required } from '@/utils'
+
 import { addColumns } from './template'
 import { defaultFilmModel } from './util'
-import Button from '../common/Button.vue'
-import { date, list, preventDefaultBehavior, required } from '@/utils'
-import { useFilmStore } from '@/state'
-import { showNotification } from '@/plugins'
-import Loader from '../common/Loader.vue'
 
 type AddFilmDto = UpsertFilmDto & { rowId: number }
 
@@ -38,7 +39,7 @@ async function handleSubmit(e: Event) {
     showNotification('success', 'Films successfully added')
     $emit('close')
   } catch (ex) {
-    showNotification('error', 'Failed to update films')
+    showNotification('error', 'Failed to add films')
   } finally {
     isLoading.value = false
   }
@@ -48,6 +49,7 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
   preventDefaultBehavior(e as PointerEvent)
 
   const idx = films.findIndex(({ rowId }) => row.rowId === rowId)
+
   if (idx == -1) {
     console.error('[AddFilms] failed to find row index; this is a bug')
     return
@@ -61,13 +63,13 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
   <q-card>
     <q-card-section>
       <q-table
-        flat
-        dense
-        hide-pagination
-        square
-        class="sticky-table"
         :columns="addColumns"
         :rows="films"
+        class="sticky-table"
+        flat
+        dense
+        square
+        hide-pagination
       >
         <template #header="props">
           <q-tr :props="props">
@@ -81,55 +83,55 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
           <q-tr :props="slotProps">
             <q-td key="title_key" :props="slotProps">
               <q-input
-                class="extra-dense"
                 v-model="slotProps.row.title"
+                :rules="[required('Title is required')]"
+                lazy-rules
+                class="extra-dense"
                 dense
                 filled
                 hide-hint
                 hide-bottom-space
-                lazy-rules
-                :rules="[required('Title is required')]"
               />
             </q-td>
 
             <q-td key="watchDates_key" :props="slotProps">
               <!-- empty label is CSS workaround, TODO: fix -->
               <q-select
-                class="extra-dense"
-                hide-bottom-space
-                hide-hint
-                dense
-                label=""
-                filled
                 v-model="slotProps.row.watchDates"
+                :rules="[list(date('Each must be a valid date'))]"
+                class="extra-dense"
+                style="width: 250px"
+                label=""
                 use-input
                 use-chips
-                multiple
-                hide-dropdown-icon
                 new-value-mode="add-unique"
-                style="width: 250px"
-                :rules="[list(date('Each must be a valid date'))]"
+                multiple
+                dense
+                filled
+                hide-dropdown-icon
+                hide-bottom-space
+                hide-hint
               />
             </q-td>
             <q-td key="comments_key" :props="slotProps">
               <q-input
-                class="extra-dense"
                 v-model="slotProps.row.comments"
-                dense
-                filled
+                class="extra-dense"
                 hide-hint
                 hide-bottom-space
+                dense
+                filled
               />
             </q-td>
 
             <q-td key="actions_key">
               <q-btn
                 v-show="films.length > 1"
+                icon="mdi-close"
+                color="negative"
                 flat
                 dense
                 round
-                icon="mdi-close"
-                color="negative"
                 @click="e => handleDeleteRow(e, slotProps.row)"
               />
             </q-td>
@@ -141,8 +143,8 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
     <q-card-actions class="justify-between">
       <Button
         label="Submit"
-        @click="handleSubmit"
         :disable-config="allRowsValid ? null : 'All rows must be valid'"
+        @click="handleSubmit"
       />
       <Button type="cancel" label="Add row" @click="handleAddRow" />
     </q-card-actions>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useErrorHandler } from '@/hooks'
 import FilmTable from '@/components/Films/FilmTable.vue'
+import { useErrorHandler } from '@/hooks'
 
 import './style.scss'
 

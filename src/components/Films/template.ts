@@ -36,7 +36,7 @@ export const tableColumns: (QuasarTableCol & { compute?: boolean })[] = [
     field: 'watchDates',
     label: 'Watch Dates',
     name: 'watchDates_key',
-    format: (v, r) => v.join(', '),
+    format: (val: string[]) => val.join(', '),
     compute: true,
   },
   {
