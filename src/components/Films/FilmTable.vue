@@ -14,14 +14,25 @@ const filmStore = useFilmStore()
 const isLoading = ref(true)
 const showUpdateFilm = ref(false)
 const showAddFilms = ref(false)
+const titleSearchText = ref('')
 
 const films = computed(() => filmStore.getFilms)
 
 await filmStore.fetchFilms().then(() => (isLoading.value = false))
 
+const searchFilms = computed(() => {
+  return films.value.filter(({ title }) => {
+    if (!titleSearchText.value) {
+      return true
+    }
+
+    return title.toLowerCase().includes(titleSearchText.value.toLowerCase())
+  })
+})
+
 const paginationConfig = computed(() => ({
   rowsPerPage: 0,
-  rowsNumber: films.value.length,
+  rowsNumber: searchFilms.value.length,
 }))
 
 function onDblClick() {
@@ -61,7 +72,7 @@ const { selectedRowRef, handleKeypress, handleClick, handleDblClick } =
     ref="tableRef"
     :tabindex="-1"
     :columns="tableColumns"
-    :rows="films"
+    :rows="searchFilms"
     row-key="id"
     class="sticky-table"
     :rows-per-page-options="[0]"
@@ -81,7 +92,21 @@ const { selectedRowRef, handleKeypress, handleClick, handleDblClick } =
     hide-bottom
   >
     <template #top>
-      <q-btn color="primary" label="Add films" @click="handleAddFilms" />
+      <div class="full-width row items-center justify-between">
+        <q-btn color="primary" label="Add films" @click="handleAddFilms" />
+
+        <q-input
+          v-model="titleSearchText"
+          class="extra-dense"
+          filled
+          dense
+          clearable
+        >
+          <template #append>
+            <q-icon name="mdi-magnify" class="cursor-pointer" />
+          </template>
+        </q-input>
+      </div>
     </template>
 
     <template #loading>

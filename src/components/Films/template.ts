@@ -46,3 +46,26 @@ export const tableColumns: (QuasarTableCol & { compute?: boolean })[] = [
     style: 'width: 99%',
   },
 ]
+
+export const addColumns: QuasarTableCol[] = [
+  {
+    field: 'title',
+    label: 'Title',
+    name: 'title_key',
+  },
+  {
+    field: 'watchDates',
+    label: 'Watch Dates',
+    name: 'watchDates_key',
+  },
+  {
+    field: 'comments',
+    label: 'Comments',
+    name: 'comments_key',
+  },
+  {
+    field: 'actions',
+    label: '',
+    name: 'actions_key',
+  },
+].map(v => ({ align: 'left', ...v }))

@@ -28,11 +28,12 @@ const props = defineProps({
 
 const $attrs = useAttrs()
 
+const actionClass = 'bg-primary text-white'
 const buttonProps = computed(() => {
   switch (props.type) {
     case 'action':
       return {
-        class: 'bg-primary text-white',
+        class: actionClass,
         flat: true,
       }
 
@@ -50,7 +51,7 @@ const buttonProps = computed(() => {
 
     default:
       return {
-        class: 'bg-primary',
+        class: actionClass,
         flat: true,
       }
   }

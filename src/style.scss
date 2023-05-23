@@ -1,0 +1,42 @@
+body {
+  background-color: #3f8b8e;
+}
+
+.q-table__container {
+  outline: none;
+}
+
+.extra-dense {
+	// q-input, q-select outer container
+	& .q-field__control {
+		height: 35px !important;
+		min-height: 35px !important;
+	}
+
+	// q-input, q-select inner container
+	& .q-field__control-container {
+		padding-top: 10px !important;
+		font-size: 12px !important;
+	}
+
+	// q-input, q-select label
+	& .q-field__label {
+		font-size: 12px !important;
+	}
+
+	// q-icon
+	& .q-icon {
+		height: 20px !important;
+	}
+
+	// q-item
+	& .q-item {
+		min-height: 28px !important;
+		font-size: 12px !important;
+	}
+
+	// q-tab
+	& .q-tab {
+		min-height: 2rem !important;
+	}
+}

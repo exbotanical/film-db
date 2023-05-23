@@ -2,7 +2,7 @@
 import { useErrorHandler } from '@/hooks'
 import FilmTable from '@/components/Films/FilmTable.vue'
 
-import './style.css'
+import './style.scss'
 
 onErrorCaptured(err => {
   useErrorHandler(err, { notify: true })

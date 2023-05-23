@@ -3,9 +3,13 @@ import Button from '@/components/common/Button.vue'
 
 import { useFilmStore } from '@/state'
 import { showNotification } from '@/plugins'
-import { required, copy } from '@/utils'
+import { required, list, date, copy } from '@/utils'
+
+import { defaultFilmModel } from './util'
+
 import type { Film, UpsertFilmDto } from '@/types'
 import type { PropType } from 'vue'
+import Loader from '../common/Loader.vue'
 
 const filmStore = useFilmStore()
 
@@ -19,15 +23,7 @@ const $emit = defineEmits<{
 
 const isLoading = ref(false)
 
-function defaultFormModel() {
-  return {
-    title: '',
-    comments: '',
-    watchDates: [],
-  }
-}
-
-const formModel = ref<UpsertFilmDto>(copy(props.film) || defaultFormModel())
+const formModel = ref<UpsertFilmDto>(copy(props.film) || defaultFilmModel())
 
 const isFormModelValid = computed(
   () => !!(formModel.value.title && formModel.value.watchDates.length),
@@ -38,35 +34,26 @@ async function handleSubmit(e: Event) {
 
   isLoading.value = true
   try {
-    // if (isAddMode.value) {
-    const { title, comments, watchDates } = formModel.value
-    await filmStore.addFilm({ title, comments, watchDates })
-    // } else {
-    //   if (!props.film?.id) {
-    //     showNotification('error', 'Something went wrong')
-    //     $emit('close')
-    //     return
-    //   }
+    if (!props.film?.id) {
+      showNotification('error', 'Something went wrong')
+      $emit('close')
+      return
+    }
 
-    //   await filmStore.updateFilm(props.film.id, formModel.value)
-    // }
+    await filmStore.updateFilm(props.film.id, formModel.value)
+    showNotification('success', 'Film successfully updated')
 
     $emit('close')
   } catch (ex) {
     console.error(ex)
     showNotification('error', 'Failed to save the film update')
   } finally {
-    showNotification('success', 'Film successfully updated')
     isLoading.value = false
   }
 }
 
 function handleReset() {
-  Object.assign(formModel.value, defaultFormModel)
-}
-
-function validateDate(values: string[]) {
-  return !values.some(value => isNaN(Date.parse(value)))
+  Object.assign(formModel.value, defaultFilmModel())
 }
 </script>
 
@@ -74,6 +61,7 @@ function validateDate(values: string[]) {
   <q-card>
     <q-card-section>
       <q-form autofocus @submit="handleSubmit" @reset="handleReset">
+        <!-- TODO: reusable component / DRY -->
         <q-input
           v-model="formModel.title"
           label="Title"
@@ -83,7 +71,6 @@ function validateDate(values: string[]) {
         />
 
         <q-select
-          class="q-pt-md"
           label="Watch Dates"
           filled
           v-model="formModel.watchDates"
@@ -94,7 +81,7 @@ function validateDate(values: string[]) {
           input-debounce="0"
           new-value-mode="add-unique"
           style="width: 250px"
-          :rules="[validateDate]"
+          :rules="[list(date('Each must be a valid date'))]"
         />
 
         <q-input
@@ -116,9 +103,6 @@ function validateDate(values: string[]) {
       />
     </q-card-actions>
 
-    <q-inner-loading :showing="isLoading">
-      <q-spinner class="q-mb-sm" size="50px" color="blue-6" />
-      <div class="text-blue-6 text-bold">Working on it...</div>
-    </q-inner-loading>
+    <Loader :is-loading="isLoading" />
   </q-card>
 </template>

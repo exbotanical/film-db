@@ -33,9 +33,17 @@ export const useFilmStore = defineStore('film', {
       }
     },
 
+    async addFilms(addFilms: UpsertFilmDto[]) {
+      const films = this.films.concat(addFilms.map(buildFilm))
+
+      await this.repository.update(films)
+
+      this.films = films
+      this.lastRefreshed = Date.now()
+    },
+
     async addFilm(addFilm: UpsertFilmDto) {
-      const newFilm = buildFilm(addFilm)
-      const newFilms = this.films.concat(newFilm)
+      const newFilms = this.films.concat(buildFilm(addFilm))
 
       await this.repository.update(newFilms)
 
