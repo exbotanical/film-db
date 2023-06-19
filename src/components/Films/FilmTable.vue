@@ -2,24 +2,17 @@
 import AddFilms from '@/components/Films/AddFilms.vue'
 import UpdateFilm from '@/components/Films/UpdateFilm.vue'
 import { useTable } from '@/hooks'
-import { useFilmStore } from '@/state'
+import { useAuthStore, useFilmStore } from '@/state'
 import type { Film } from '@/types'
 
 import { tableColumns } from './template'
 
-// TODO: reorganize by logical unit
+const authStore = useAuthStore()
+
 const filmStore = useFilmStore()
-
-const isLoading = ref(true)
-const titleSearchText = ref('')
-
-const paginationConfig = computed(() => ({
-  rowsPerPage: 0,
-  rowsNumber: searchFilms.value.length,
-}))
-
 const films = computed(() => filmStore.getFilms)
 
+const titleSearchText = ref('')
 const searchFilms = computed(() =>
   films.value.filter(({ title }) => {
     if (!titleSearchText.value) {
@@ -30,9 +23,19 @@ const searchFilms = computed(() =>
   }),
 )
 
+const isLoading = ref(true)
+const paginationConfig = computed(() => ({
+  rowsPerPage: 0,
+  rowsNumber: searchFilms.value.length,
+}))
+
 const showUpdateFilm = ref(false)
 function handleCloseUpdateModal() {
   showUpdateFilm.value = false
+}
+
+function onDblClick() {
+  showUpdateFilm.value = true
 }
 
 const showAddFilms = ref(false)
@@ -47,10 +50,6 @@ function handleCloseAddModal() {
 
 const tableRef = ref(null)
 const tableId = 'films-table'
-
-function onDblClick() {
-  showUpdateFilm.value = true
-}
 
 const { selectedRowRef, handleKeypress, handleClick, handleDblClick } =
   useTable<Film>({
@@ -95,7 +94,12 @@ onBeforeMount(
   >
     <template #top>
       <div class="full-width row items-center justify-between">
-        <q-btn color="primary" label="Add films" @click="handleAddFilms" />
+        <q-btn
+          v-if="authStore.isLoggedIn"
+          color="primary"
+          label="Add films"
+          @click="handleAddFilms"
+        />
 
         <q-input
           v-model="titleSearchText"
@@ -129,19 +133,11 @@ onBeforeMount(
     </template>
   </q-table>
 
-  <q-dialog
-    v-model="showUpdateFilm"
-    no-backdrop-dismiss
-    @hide="handleCloseUpdateModal"
-  >
+  <q-dialog v-model="showUpdateFilm" @hide="handleCloseUpdateModal">
     <UpdateFilm :film="selectedRowRef" @close="handleCloseUpdateModal" />
   </q-dialog>
 
-  <q-dialog
-    v-model="showAddFilms"
-    no-backdrop-dismiss
-    @hide="handleCloseAddModal"
-  >
+  <q-dialog v-model="showAddFilms" full-width @hide="handleCloseAddModal">
     <AddFilms :film="selectedRowRef" @close="handleCloseAddModal" />
   </q-dialog>
 </template>
@@ -149,12 +145,11 @@ onBeforeMount(
 <style scoped lang="scss">
 .sticky-table {
   overflow-y: auto;
-  height: 100%;
+  height: 100vh;
 
   thead tr th {
     position: sticky;
     z-index: 1;
-    background: white;
   }
 
   thead tr:first-child th {

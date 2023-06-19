@@ -10,12 +10,16 @@ const noop = () => {}
  * @param tableRows The table rows.
  * @param tableId The table id.
  * @param initialRowIndex The initial row index, relative to `tableRows`.
+ * @param showCondition A flag indicating whether row drilldown should trigger any actions
+ * @param onClick Hook for row click events
+ * @param onDblClick Hook for row double-click events
  */
 export function useTable<RowType extends Record<PropertyKey, any>>({
   tableRef,
   tableRows,
   tableId,
   initialRowIndex = 0,
+  showCondition = true,
   onClick = noop,
   onDblClick = noop,
 }: {
@@ -23,6 +27,7 @@ export function useTable<RowType extends Record<PropertyKey, any>>({
   tableRows: ComputedRef<RowType[]> | RowType[]
   tableId: string
   initialRowIndex?: number
+  showCondition?: ComputedRef<boolean> | boolean
   onClick?: () => void
   onDblClick?: () => void
 }) {
@@ -42,26 +47,31 @@ export function useTable<RowType extends Record<PropertyKey, any>>({
 
     switch (e.key) {
       case 'ArrowUp':
+        preventDefaultBehavior(e)
+
         if (currentIdx !== 0) {
           idx = currentIdx - 1
         }
 
-        preventDefaultBehavior(e)
         break
 
       case 'ArrowDown':
+        preventDefaultBehavior(e)
+
         if (currentIdx < lastIdx) {
           // stop at the bottom
           idx = currentIdx + 1
         }
 
-        preventDefaultBehavior(e)
         break
 
       case 'Enter':
-        onDblClick()
-
         preventDefaultBehavior(e)
+
+        if (unref(showCondition)) {
+          onDblClick()
+        }
+
         break
 
       default:
@@ -91,7 +101,9 @@ export function useTable<RowType extends Record<PropertyKey, any>>({
     selectedRowRef.value = row
     selectedIdxRef.value = idx
 
-    onDblClick()
+    if (unref(showCondition)) {
+      onDblClick()
+    }
   }
 
   function handleKeypress(e: KeyboardEvent) {

@@ -1,5 +1,6 @@
 import { HttpError } from '@/hooks'
 import type { HttpClient } from '@/services/http/client'
+import { useAuthStore } from '@/state'
 import type { DataRepository } from '@/types'
 
 export interface GitHubRepositoryProps {
@@ -29,12 +30,11 @@ interface GistRequestPayload {
   }
 }
 
-const TOKEN = localStorage.getItem('TODO_TOK')
-
 export class GitHubRepository<T> implements DataRepository<T> {
   constructor(
     private readonly client: HttpClient,
     private readonly props: GitHubRepositoryProps,
+    private readonly token = useAuthStore().sessionToken,
   ) {}
 
   async get() {
@@ -65,7 +65,7 @@ export class GitHubRepository<T> implements DataRepository<T> {
             'X-GitHub-Api-Version': '2022-11-28',
             'accept': 'application/vnd.github+json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${TOKEN}`,
+            'Authorization': `Bearer ${this.token}`,
           },
         },
       )

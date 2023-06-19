@@ -1,4 +1,5 @@
 export * from './datetime'
 export * from './event'
+export * from './fmt'
 export * from './form'
 export * from './ref'

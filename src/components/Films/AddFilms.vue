@@ -6,7 +6,7 @@ import { useFilmStore } from '@/state'
 import type { UpsertFilmDto } from '@/types'
 import { date, list, preventDefaultBehavior, required } from '@/utils'
 
-import { addColumns } from './template'
+import { addColumns, filmTypeOptions } from './template'
 import { defaultFilmModel } from './util'
 
 type AddFilmDto = UpsertFilmDto & { rowId: number }
@@ -32,7 +32,6 @@ async function handleSubmit(e: Event) {
   e.preventDefault()
 
   isLoading.value = true
-
   try {
     await filmStore.addFilms(films)
 
@@ -81,6 +80,22 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
 
         <template #body="slotProps">
           <q-tr :props="slotProps">
+            <q-td key="type_key" :props="slotProps">
+              <q-select
+                v-model="slotProps.row.type"
+                :rules="[required('Type is required')]"
+                lazy-rules
+                class="extra-dense"
+                dense
+                filled
+                hide-hint
+                hide-bottom-space
+                emit-value
+                map-options
+                :options="filmTypeOptions"
+              />
+            </q-td>
+
             <q-td key="title_key" :props="slotProps">
               <q-input
                 v-model="slotProps.row.title"
@@ -120,6 +135,19 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
                 hide-hint
                 hide-bottom-space
                 dense
+                filled
+              />
+            </q-td>
+            <q-td key="rating_key" :props="slotProps">
+              <q-input
+                v-model="slotProps.row.rating"
+                class="extra-dense"
+                hide-hint
+                hide-bottom-space
+                dense
+                type="number"
+                max="10"
+                min="0"
                 filled
               />
             </q-td>

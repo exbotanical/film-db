@@ -4,11 +4,23 @@ import type { PropType } from 'vue'
 import Button from '@/components/common/Button.vue'
 import Loader from '@/components/common/Loader.vue'
 import { showNotification } from '@/plugins'
-import { useFilmStore } from '@/state'
+import { useAuthStore, useFilmStore } from '@/state'
 import type { Film, UpsertFilmDto } from '@/types'
-import { required, list, date, copy, preventDefaultBehavior } from '@/utils'
+import {
+  required,
+  list,
+  date,
+  copy,
+  preventDefaultBehavior,
+  toReadableDate,
+  maybeApply,
+} from '@/utils'
 
+import { filmTypeOptions } from './template'
 import { defaultFilmModel } from './util'
+
+const authStore = useAuthStore()
+const isReadonlyMode = computed(() => !authStore.isLoggedIn)
 
 const filmStore = useFilmStore()
 
@@ -81,14 +93,68 @@ function handleReset() {
   <q-card>
     <q-card-section>
       <q-form @submit="handleSubmit" @reset="handleReset">
-        <!-- TODO: reusable component / DRY -->
+        <!-- TODO: DRY components -->
+
+        <div class="flex q-pb-md">
+          <q-input
+            label="Created"
+            :model-value="maybeApply(toReadableDate, props.film?.createdAt)"
+            filled
+            readonly
+            dense
+            class="q-pr-xs"
+          />
+
+          <q-input
+            label="Updated"
+            :model-value="maybeApply(toReadableDate, props.film?.updatedAt)"
+            filled
+            readonly
+            dense
+            class="q-pl-xs"
+          />
+        </div>
+
         <q-input
           v-model="formModel.title"
           :rules="[required('Title is required')]"
           lazy-rules
           label="Title"
           filled
+          dense
+          :readonly="isReadonlyMode"
         />
+
+        <div class="flex">
+          <q-select
+            v-model="formModel.type"
+            label="Classification"
+            :rules="[required('Type is required')]"
+            lazy-rules
+            dense
+            filled
+            emit-value
+            map-options
+            :hide-dropdown-icon="isReadonlyMode"
+            :options="filmTypeOptions"
+            :readonly="isReadonlyMode"
+            class="q-pr-xs"
+            style="width: 50%"
+          />
+
+          <q-input
+            v-model="formModel.rating"
+            label="Rating"
+            dense
+            type="number"
+            max="10"
+            min="0"
+            filled
+            style="padding-bottom: 20px; width: 50%"
+            :readonly="isReadonlyMode"
+            class="q-pl-xs"
+          />
+        </div>
 
         <q-select
           v-model="formModel.watchDates"
@@ -96,12 +162,13 @@ function handleReset() {
           label="Watch Dates"
           input-debounce="0"
           use-input
+          dense
           use-chips
           new-value-mode="add-unique"
           multiple
           hide-dropdown-icon
           filled
-          style="width: 250px"
+          :readonly="isReadonlyMode"
         />
 
         <q-input
@@ -109,16 +176,19 @@ function handleReset() {
           label="Comments"
           type="textarea"
           filled
+          dense
+          :readonly="isReadonlyMode"
         />
       </q-form>
     </q-card-section>
 
     <q-separator />
-    <q-card-actions>
+    <q-card-actions v-if="!isReadonlyMode">
       <Button
         :disable-config="isFormModelValid ? null : 'Missing required fields'"
         type="action"
         label="Save"
+        class="q-pr-sm"
         @click="handleSubmit"
       />
       <Button type="danger" label="Delete" @click="handleDelete" />

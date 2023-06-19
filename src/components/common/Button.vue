@@ -37,13 +37,13 @@ const buttonProps = computed(() => {
 
     case 'cancel':
       return {
-        class: 'text-gray-600',
+        class: 'text-grey-6',
         outline: true,
       }
 
     case 'danger':
       return {
-        class: 'bg-negative',
+        class: 'bg-negative text-grey-1',
         flat: true,
       }
 
