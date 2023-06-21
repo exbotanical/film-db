@@ -1,66 +1,97 @@
-interface ErroneousResponse {
-  data: null
-  ok: false
-  message?: string | undefined
-}
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import type { Nullish } from '@/types'
 
-interface SuccessfulResponse<T> {
-  data: T
-  ok: true
-}
-
-export type Normalized<T> = Promise<ErroneousResponse | SuccessfulResponse<T>>
-
-export interface Normalizer {
-  <T>(response: Response): Normalized<T>
-}
+import type { Normalized, RequestArgs } from './types'
 
 export class HttpClient {
-  constructor(
-    private readonly baseUrl: string,
-    private readonly normalize: Normalizer,
-  ) {}
+  constructor(private readonly baseUrl = '/') {}
 
-  async get<T = null>(url: string): Normalized<T> {
+  async get<T = any>(url: string, args: RequestArgs = {}): Normalized<T> {
     const response = await this.request(url, {
       method: 'GET',
+      ...args,
     })
 
-    return this.normalize<T>(response)
+    return this.normalize(response)
   }
 
-  async post<T = null | undefined, D = null | undefined>(
-    url: string,
-    payload?: D,
-    opts: Omit<RequestInit, 'body'> = {},
-  ): Normalized<T> {
+  async post<T = Nullish>(url: string, args: RequestArgs = {}): Normalized<T> {
     const response = await this.request(url, {
       method: 'POST',
-      ...(payload ? { body: JSON.stringify(payload) } : {}),
-      ...opts,
+      ...args,
     })
 
     return this.normalize(response)
   }
 
-  async patch<T = null | undefined, D = null | undefined>(
-    url: string,
-    payload?: D,
-    opts: Omit<RequestInit, 'body'> = {},
-  ): Normalized<T> {
+  async put<T = Nullish>(url: string, args: RequestArgs = {}): Normalized<T> {
+    const response = await this.request(url, {
+      method: 'PUT',
+      ...args,
+    })
+
+    return this.normalize(response)
+  }
+
+  async patch<T = Nullish>(url: string, args: RequestArgs = {}): Normalized<T> {
     const response = await this.request(url, {
       method: 'PATCH',
-      ...(payload ? { body: JSON.stringify(payload) } : {}),
-      ...opts,
-      mode: 'cors',
+      ...args,
     })
 
     return this.normalize(response)
   }
 
-  async request(url: string, opts: RequestInit) {
-    return fetch(this.baseUrl + url, {
-      ...opts,
+  async delete<T = Nullish>(
+    url: string,
+    args: RequestArgs = {},
+  ): Normalized<T> {
+    const response = await this.request(url, {
+      method: 'DELETE',
+      ...args,
     })
+
+    return this.normalize(response)
+  }
+
+  private async request(url: string, opts: RequestInit) {
+    return fetch(this.baseUrl + url, opts)
+  }
+
+  private async normalize<T>(response: Response): Normalized<T> {
+    let data = null
+    try {
+      if (response.ok) {
+        data = await response.json()
+      }
+    } catch (ex) {
+      return {
+        ok: false,
+        data: null,
+        status: -1,
+      }
+    }
+
+    return {
+      ok: response.ok,
+      data,
+      status: response.status,
+    }
   }
 }
+
+// ;['get'].forEach(method => {
+//   Object.defineProperty(HttpClient.prototype, method, {
+//     value: async function <T = Nullish>(
+//       url: string,
+//       args: RequestArgs = {},
+//     ): Normalized<T> {
+//       const response = await this.request(url, {
+//         method: method.toUpperCase(),
+//         ...args,
+//       })
+
+//       return this.normalize(response)
+//     },
+//   })
+// })

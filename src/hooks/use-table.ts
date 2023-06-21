@@ -31,7 +31,7 @@ export function useTable<RowType extends Record<PropertyKey, any>>({
   onClick?: () => void
   onDblClick?: () => void
 }) {
-  // @see https://github.com/vuejs/core/issues/2136
+  // see: https://github.com/vuejs/core/issues/2136
   const selectedRowRef = ref(unref(tableRows)[initialRowIndex]) as Ref<
     RowType | undefined
   >

@@ -9,7 +9,7 @@ const props = defineProps({
 
 <template>
   <q-inner-loading :showing="props.isLoading">
-    <q-spinner class="q-mb-sm" size="50px" color="blue-6" />
-    <div class="text-blue-6 text-bold">Working on it...</div>
+    <q-spinner class="q-mb-sm" size="50px" color="text-secondary" />
+    <div class="text-secondary text-bold">Working on it...</div>
   </q-inner-loading>
 </template>

@@ -150,7 +150,7 @@ function handleReset() {
             max="10"
             min="0"
             filled
-            style="padding-bottom: 20px; width: 50%"
+            style="width: 50%; padding-bottom: 20px"
             :readonly="isReadonlyMode"
             class="q-pl-xs"
           />

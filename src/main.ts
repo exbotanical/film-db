@@ -5,7 +5,7 @@ import { createApp } from 'vue'
 
 import { debugPlugin, registerNotifyPlugin, quasarStyles } from '@/plugins'
 import { GitHubRepository } from '@/repositories/github'
-import { HttpClient, defaultNormalizer } from '@/services/http'
+import { HttpClient } from '@/services/http'
 
 import App from './App.vue'
 
@@ -18,7 +18,7 @@ createApp(App)
   .use(
     createPinia().use(() => ({
       repository: new GitHubRepository(
-        new HttpClient(import.meta.env.VITE_GITHUB_API_URL, defaultNormalizer),
+        new HttpClient(import.meta.env.VITE_GITHUB_API_URL),
         {
           databaseId: import.meta.env.VITE_GITHUB_GIST_DATABASE_ID,
           databaseName: import.meta.env.VITE_GITHUB_GIST_DATABASE_NAME,

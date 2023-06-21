@@ -17,7 +17,6 @@ const $emit = defineEmits<{
 
 const isLoading = ref(false)
 const filmStore = useFilmStore()
-
 const films: AddFilmDto[] = reactive([{ rowId: 0, ...defaultFilmModel() }])
 
 const allRowsValid = computed(() =>
@@ -45,11 +44,11 @@ async function handleSubmit(e: Event) {
 }
 
 function handleDeleteRow(e: Event, row: AddFilmDto) {
-  preventDefaultBehavior(e as PointerEvent)
+  preventDefaultBehavior(e)
 
   const idx = films.findIndex(({ rowId }) => row.rowId === rowId)
 
-  if (idx == -1) {
+  if (idx === -1) {
     console.error('[AddFilms] failed to find row index; this is a bug')
     return
   }
@@ -84,15 +83,15 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
               <q-select
                 v-model="slotProps.row.type"
                 :rules="[required('Type is required')]"
-                lazy-rules
+                :options="filmTypeOptions"
                 class="extra-dense"
+                lazy-rules
                 dense
                 filled
                 hide-hint
                 hide-bottom-space
                 emit-value
                 map-options
-                :options="filmTypeOptions"
               />
             </q-td>
 
@@ -100,8 +99,8 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
               <q-input
                 v-model="slotProps.row.title"
                 :rules="[required('Title is required')]"
-                lazy-rules
                 class="extra-dense"
+                lazy-rules
                 dense
                 filled
                 hide-hint
@@ -116,10 +115,10 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
                 :rules="[list(date('Each must be a valid date'))]"
                 class="extra-dense"
                 style="width: 250px"
+                new-value-mode="add-unique"
                 label=""
                 use-input
                 use-chips
-                new-value-mode="add-unique"
                 multiple
                 dense
                 filled
@@ -142,12 +141,12 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
               <q-input
                 v-model="slotProps.row.rating"
                 class="extra-dense"
-                hide-hint
-                hide-bottom-space
-                dense
                 type="number"
                 max="10"
                 min="0"
+                hide-hint
+                hide-bottom-space
+                dense
                 filled
               />
             </q-td>
@@ -170,8 +169,8 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
 
     <q-card-actions class="justify-between">
       <Button
-        label="Submit"
         :disable-config="allRowsValid ? null : 'All rows must be valid'"
+        label="Submit"
         @click="handleSubmit"
       />
       <Button type="cancel" label="Add row" @click="handleAddRow" />

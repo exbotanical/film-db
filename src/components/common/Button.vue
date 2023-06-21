@@ -17,7 +17,6 @@ const props = defineProps({
     type: String as PropType<ButtonType>,
   },
 
-  // Disable + tooltip config. Should return null or tooltip message if disabled. Cannot be used with tooltip.
   disableConfig: {
     type: String as PropType<string | null>,
     default: null,
@@ -77,7 +76,6 @@ const attrsSansClass = computed(() => {
       v-if="props.disableConfig"
       transition-show="scale"
       transition-hide="scale"
-      class="min-w-fit"
     >
       {{ props.disableConfig }}
     </q-tooltip>

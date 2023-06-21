@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { resolve } from 'path'
 
 import vue from '@vitejs/plugin-vue'
@@ -7,11 +8,13 @@ import { defineConfig } from 'vite'
 const r = (dir: string) => resolve(__dirname, dir)
 
 export default defineConfig({
+  base: '/film-db/',
+
   plugins: [
     vue(),
     AutoImport({
+      imports: ['vue', 'vitest'],
       dts: 'src/types/auto-imports.d.ts',
-      imports: ['vue'],
     }),
   ],
   resolve: {
@@ -21,5 +24,8 @@ export default defineConfig({
   },
   server: {
     port: 5000,
+  },
+  test: {
+    globals: true,
   },
 })

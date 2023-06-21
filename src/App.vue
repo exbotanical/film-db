@@ -4,9 +4,9 @@ import { useQuasar } from 'quasar'
 import FilmTable from '@/components/Films/FilmTable.vue'
 import { useErrorHandler, useRedirect } from '@/hooks'
 
-import './style.scss'
-
 import { useAuthStore } from './state'
+
+import './style.scss'
 
 const $q = useQuasar()
 

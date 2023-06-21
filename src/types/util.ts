@@ -11,3 +11,5 @@ export type NumericRange<
       [...Arr, 1],
       Arr[Start] extends undefined ? Acc : Acc | Arr['length']
     >
+
+export type Nullish = null | undefined

@@ -144,8 +144,8 @@ onBeforeMount(
 
 <style scoped lang="scss">
 .sticky-table {
-  overflow-y: auto;
   height: 100vh;
+  overflow-y: auto;
 
   thead tr th {
     position: sticky;

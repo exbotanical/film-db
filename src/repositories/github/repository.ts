@@ -21,15 +21,6 @@ interface GistResponsePayload {
   // TODO: rest
 }
 
-interface GistRequestPayload {
-  gist_id: string
-  files: {
-    [k: string]: {
-      content: string
-    }
-  }
-}
-
 export class GitHubRepository<T> implements DataRepository<T> {
   constructor(
     private readonly client: HttpClient,
@@ -52,23 +43,21 @@ export class GitHubRepository<T> implements DataRepository<T> {
   // TODO: paginate writes to mult files
   async update(payload: T[]) {
     return this.client
-      .patch<GistResponsePayload, GistRequestPayload>(
-        `/gists/${this.props.databaseId}`,
-        {
+      .patch<GistResponsePayload>(`/gists/${this.props.databaseId}`, {
+        body: JSON.stringify({
           gist_id: this.props.databaseId,
           files: {
             [this.props.databaseName]: { content: JSON.stringify(payload) },
           },
+        }),
+
+        headers: {
+          'X-GitHub-Api-Version': '2022-11-28',
+          'accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.token}`,
         },
-        {
-          headers: {
-            'X-GitHub-Api-Version': '2022-11-28',
-            'accept': 'application/vnd.github+json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${this.token}`,
-          },
-        },
-      )
+      })
       .then(({ data, ok }) => {
         if (!ok) {
           throw new HttpError('failed to fetch data from db')
