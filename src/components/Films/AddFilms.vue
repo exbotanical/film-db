@@ -47,7 +47,6 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
   preventDefaultBehavior(e)
 
   const idx = films.findIndex(({ rowId }) => row.rowId === rowId)
-
   if (idx === -1) {
     console.error('[AddFilms] failed to find row index; this is a bug')
     return
@@ -58,16 +57,20 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
 </script>
 
 <template>
-  <q-card>
-    <q-card-section>
+  <q-card class="column full-height">
+    <q-card-section style="height: 90%">
       <q-table
         :columns="addColumns"
         :rows="films"
+        :rows-per-page-options="[0]"
+        hide-pagination
+        virtual-scroll
+        :virtual-scroll-item-size="20"
+        :virtual-scroll-sticky-size-start="20"
         class="sticky-table"
         flat
         dense
         square
-        hide-pagination
       >
         <template #header="props">
           <q-tr :props="props">
@@ -166,6 +169,7 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
         </template>
       </q-table>
     </q-card-section>
+    <q-space />
 
     <q-card-actions class="justify-between">
       <Button
@@ -179,3 +183,20 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
     <Loader :is-loading="isLoading" />
   </q-card>
 </template>
+
+<style scoped lang="scss">
+// TODO: reuse
+.sticky-table {
+  height: 100%;
+  overflow-y: auto;
+
+  thead tr th {
+    position: sticky;
+    z-index: 1;
+  }
+
+  thead tr:first-child th {
+    top: 0;
+  }
+}
+</style>

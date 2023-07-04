@@ -11,7 +11,7 @@ import './style.scss'
 const $q = useQuasar()
 
 onBeforeMount(() => {
-  const { wasRedirected } = useRedirect('/login', '/')
+  const { wasRedirected } = useRedirect('/film-db/login', '/film-db')
 
   if (wasRedirected.value) {
     $q.dialog({
@@ -38,11 +38,6 @@ onErrorCaptured(err => {
 
 <template>
   <QLayout view="hHh Lpr fFf">
-    <Suspense>
-      <template #fallback> Loading... </template>
-      <template #default>
-        <FilmTable />
-      </template>
-    </Suspense>
+    <FilmTable />
   </QLayout>
 </template>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import AddFilms from '@/components/Films/AddFilms.vue'
 import UpdateFilm from '@/components/Films/UpdateFilm.vue'
+import AboutDialog from '@/components/About.vue'
+
 import { useTable } from '@/hooks'
 import { useAuthStore, useFilmStore } from '@/state'
 import type { Film } from '@/types'
@@ -62,8 +64,10 @@ const { selectedRowRef, handleKeypress, handleClick, handleDblClick } =
 
 onBeforeMount(
   async () =>
-    await filmStore.fetchFilms().then(() => (isLoading.value = false)),
+    await filmStore.fetchFilms().finally(() => (isLoading.value = false)),
 )
+
+const showAboutDialog = ref(false)
 </script>
 
 <template>
@@ -86,7 +90,6 @@ onBeforeMount(
     flat
     dense
     hide-pagination
-    hide-bottom
     square
     @keydown="handleKeypress"
     @row-click="handleClick"
@@ -131,6 +134,17 @@ onBeforeMount(
         </q-th>
       </q-tr>
     </template>
+
+    <template #bottom>
+      <q-space />
+      <q-btn
+        color="grey-6"
+        icon="mdi-help"
+        round
+        flat
+        @click="showAboutDialog = true"
+      />
+    </template>
   </q-table>
 
   <q-dialog v-model="showUpdateFilm" @hide="handleCloseUpdateModal">
@@ -138,7 +152,11 @@ onBeforeMount(
   </q-dialog>
 
   <q-dialog v-model="showAddFilms" full-width @hide="handleCloseAddModal">
-    <AddFilms :film="selectedRowRef" @close="handleCloseAddModal" />
+    <AddFilms @close="handleCloseAddModal" />
+  </q-dialog>
+
+  <q-dialog v-model="showAboutDialog">
+    <AboutDialog />
   </q-dialog>
 </template>
 
