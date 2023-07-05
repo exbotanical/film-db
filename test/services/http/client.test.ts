@@ -35,7 +35,7 @@ const TEST_CASES: TestProps[] = [
   {
     method: 'post',
     url: '/somepath',
-    data: null,
+    data: {},
     ok: true,
     status: 201,
   },
@@ -62,8 +62,12 @@ const server = setupServer(
 beforeAll(() => {
   server.listen({ onUnhandledRequest: 'error' })
 })
-afterAll(() => { server.close(); })
-afterEach(() => { server.resetHandlers(); })
+afterAll(() => {
+  server.close()
+})
+afterEach(() => {
+  server.resetHandlers()
+})
 
 const testClient = new HttpClient(TEST_BASE_URL)
 
