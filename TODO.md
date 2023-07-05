@@ -7,4 +7,5 @@
 - [ ] bg task to source images/links
 - [x] fix > 5 bulk add rows
 - [ ] fix ordering of notifs vs actions
-- [ ] table sorting
+- [ ] table sorting + server-side pagination
+- [ ] dark mode
