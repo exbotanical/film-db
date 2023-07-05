@@ -5,7 +5,7 @@
     <q-card-section class="row items-center q-pb-none">
       <div class="text-h6">About Film DB</div>
       <q-space />
-      <q-btn icon="mdi-close" color="grey-6" flat round dense v-close-popup />
+      <q-btn v-close-popup icon="mdi-close" color="grey-6" flat round dense />
     </q-card-section>
 
     <q-card-section>

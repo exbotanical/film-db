@@ -1,8 +1,7 @@
 <script setup lang="ts">
+import AboutDialog from '@/components/About.vue'
 import AddFilms from '@/components/Films/AddFilms.vue'
 import UpdateFilm from '@/components/Films/UpdateFilm.vue'
-import AboutDialog from '@/components/About.vue'
-
 import { useTable } from '@/hooks'
 import { useAuthStore, useFilmStore } from '@/state'
 import type { Film } from '@/types'

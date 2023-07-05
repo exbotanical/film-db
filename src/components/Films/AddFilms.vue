@@ -47,6 +47,7 @@ function handleDeleteRow(e: Event, row: AddFilmDto) {
   preventDefaultBehavior(e)
 
   const idx = films.findIndex(({ rowId }) => row.rowId === rowId)
+
   if (idx === -1) {
     console.error('[AddFilms] failed to find row index; this is a bug')
     return
