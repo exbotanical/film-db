@@ -11,6 +11,8 @@ import './style.scss'
 const $q = useQuasar()
 
 onBeforeMount(() => {
+  $q.dark.set(true)
+
   const { wasRedirected } = useRedirect('/film-db/login', '/film-db')
 
   if (wasRedirected.value) {

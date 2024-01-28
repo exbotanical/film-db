@@ -1,10 +1,10 @@
 export const quasarStyles = {
   brand: {
-    'primary': '#8FBCBB',
-    'secondary': '#ECEFF4',
+    'primary': '#48717e',
+    'secondary': '#000',
     'accent': '#c9bacc',
 
-    'dark': '#454343',
+    'dark': '#000',
     'dark-page': '#545454',
 
     'positive': '#A3BE8C',
